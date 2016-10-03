@@ -123,16 +123,231 @@ public class ScanningForm extends javax.swing.JFrame
         return string.matches("[-+]?\\d*\\.?\\d+");  
     }
     
-    public void searchIDNumber(String student_id)
+    // Define the search id number function
+    private void searchIDNumber(String student_id)
     {
+        // Set the implicit wait time
+        browser.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        
+        // Navigate to persum
         browser.get("https://y.byu.edu/ry/ae/prod/person/cgi/personSummary.cgi");
         
+        // Input the student id in the search box
         WebElement student_id_input = browser.findElement(By.name("NAVpattern"));
         student_id_input.sendKeys(student_id);
 
+        // Click the go button
         WebElement page_go_button = browser.findElement(By.xpath("//a[@href='javascript:NAVpreXref()']"));
         page_go_button.click();
+        
+        // Save all phantomjs windows
+        Set<String> handles = browser.getWindowHandles();
+        Iterator<String> iterator = handles.iterator();
+        
+        // Check if there was a pop up window
+        if (handles.size() > 1)
+        {
+            // Save the main and pop up windows
+            String main_window = iterator.next();
+            String pop_up_window = iterator.next();
+        
+            // Close the pop up window
+            browser.switchTo().window(pop_up_window);
+            browser.close();
+
+            // Switch back to the main window
+            browser.switchTo().window(main_window);
+            
+            // Output an error message
+            JOptionPane.showMessageDialog(null, "The ID you've entered is incorrect. Please check it and try again.", "Incorrect ID", JOptionPane.ERROR_MESSAGE);
+            
+            // Exit the function
+            return;
+        }
+        
+        else
+        {
+            // Get the student's name
+            WebElement student_name_element = browser.findElement(By.name("restore_name"));
+            String student_name = student_name_element.getAttribute("value");
+            
+            // Get the student's id number
+            WebElement student_id_element = browser.findElement(By.name("restore_byu_id"));
+            student_id = student_id_element.getAttribute("value");
+            
+            // Format the id number
+            student_id = student_id.replaceAll("\\D", "");
+            
+            // Get the file name
+            String folder_name = student_name + " " + student_id;
+            
+            // Get the digital copies folder
+            File student_digital_copies = new File("M:\\Student Digital Copies");
+            
+            // Initialize the target folder variable
+            File target_folder = null;
+            
+            // Get all of the files in student digital copies
+            File[] digital_copies = student_digital_copies.listFiles();
+            
+            // Loop through each file
+            for(File file: digital_copies)
+            {
+                // Check if the student already has a folder
+                if(file.getName().equals(folder_name))
+                {
+                    // If so, save the folder and exit the loop
+                    target_folder = file;
+                    break;
+                }
+            }
+            
+            // Check if the studen't fodler was found
+            if(target_folder == null)
+            {
+                // If not, ask to make a new folder
+                int response = JOptionPane.showConfirmDialog(null, student_name + " does not currently have a folder. Would you like to make one now?", "Make Folder", JOptionPane.YES_NO_OPTION);
+               
+                // Check if the user chose yes
+                if(response == JOptionPane.YES_OPTION)
+                {
+                    // If so, make a new folder for them
+                    File new_folder = new File(student_digital_copies.getAbsolutePath() + "\\" + folder_name);
+                    new_folder.mkdir();
+                    
+                    // Get the scanning folder and the new folder
+                    File source = new File(location_label.getText() + "\\" + file_list.get(current_file));
+                    File destination = new File(new_folder + "\\" + file_option_box.getSelectedItem().toString() + " 1.pdf");
+                    
+                    // Copy the file from the old folder to the new one
+                    try 
+                    {
+                        Files.copy(source, destination);
+                    }
+                    
+                    catch (IOException e) 
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+                
+                else
+                {
+                    return;
+                }
+            }
+            
+            else
+            {
+                // Get the scanning file
+                File source = new File(location_label.getText() + "\\" + file_list.get(current_file));
+                
+                // Set the file number
+                Integer file_number = 1;
+                
+                // Initialize the destination folder variable
+                File destination;
+                
+                do
+                {
+                    // Get the destination folder
+                    destination = new File(target_folder + "\\" + file_option_box.getSelectedItem().toString() + " " + file_number + ".pdf");
+                    file_number ++;
+                } 
+                while(destination.exists());
+                
+                // Copy the file from the old folder to the new one
+                try 
+                {
+                    Files.copy(source, destination);
+                }
+
+                catch (IOException e) 
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        
+            // Get the next file
+            advanceCurrentFile();
+        }
     }
+    
+    // Define the advance current file function
+    private void advanceCurrentFile()
+    {
+        // Check if for the last file
+        if(current_file < Integer.valueOf(number_II_label.getText()) - 1)
+        {
+            // If more files remain increment the current file
+            current_file ++;
+            
+            // Close the previous file and open the new one
+            try
+            {
+                input_stream.close();
+                input_stream = new FileInputStream(directory_path + "\\" + file_list.get(current_file));
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+            
+            // Load the new file to the window
+            controller.openDocument(input_stream, "", "");
+            
+            // Reset the appropriate labels
+            filename_label.setText(file_list.get(current_file));
+            number_I_label.setText(String.valueOf(current_file + 1));
+            id_input.setText("");
+            file_option_box.setSelectedIndex(0);
+        }
+        
+        else
+        {
+            // Ask if the user wants to clear the folder they scanned from
+            int response = JOptionPane.showConfirmDialog(null, "The scanning process is now complete. Would you like to clear the scanning folder?", "Clear Folder", JOptionPane.YES_NO_OPTION);
+            
+            // Check if they said yes
+            if(response == JOptionPane.YES_OPTION)
+            {                  
+                // If so get the scanning folder
+                File delete_folder = new File(location_label.getText());
+                try 
+                {
+                    // Close the last opened file
+                    input_stream.close();
+                    
+                    // Clear the scanning folder
+                    FileUtils.cleanDirectory(delete_folder);
+                } 
+                
+                catch (IOException e) 
+                {
+                    throw new RuntimeException(e);
+                }
+
+            }
+            
+            else
+            {
+                return;
+            }
+            
+            // Reset the directory path
+            directory_path = "M:\\To_Be_Scanned\\";
+            
+            // Clear the file list
+            file_list.clear();
+                 
+            // Close the scanning form
+            this.dispose();
+            
+            // Restore the main form
+            main_form.setVisible(true);
+        }
+    }
+
 
     // Suppress compile warnings
     @SuppressWarnings("unchecked")
@@ -433,8 +648,10 @@ public class ScanningForm extends javax.swing.JFrame
     // Define the submit button click function            
     private void submit_buttonActionPerformed(java.awt.event.ActionEvent evt) 
     {
+         // Check if there is a file loaded
         if(number_I_label.getText() == "#" || number_I_label.getText() == "0")
         {
+            // If not 
             JOptionPane.showMessageDialog(null, "There is nothing to submit.", "No File", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -475,14 +692,26 @@ public class ScanningForm extends javax.swing.JFrame
         
         else
         {
-           searchIDNumber(id_value); 
+           searchIDNumber(id_value);
         }
     }
 
     // Define the skip button click function
     private void skip_buttonActionPerformed(java.awt.event.ActionEvent evt) 
     {
-        // COMING SOON
+         int response = JOptionPane.showConfirmDialog(null, 
+                "WARNING: This file will still be cleared with the rest of the items in the scanning folder if you choose to empty the file at the end of the program. Are you sure you wish to continue?", 
+                "Skip Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if(response == JOptionPane.YES_OPTION)
+            {
+                advanceCurrentFile();
+            }
+            
+            else
+            {
+                return;
+            }
+    }
     }
 
     // Define the cancel button click function
@@ -517,7 +746,7 @@ public class ScanningForm extends javax.swing.JFrame
     // Define the file chooser button click
     private void file_chooser_buttonActionPerformed(java.awt.event.ActionEvent evt) 
     {
-        // Check if the scanning process has begun yet
+       // Check if the scanning process has begun yet
         if (number_I_label.getText() == "1" || number_I_label.getText() == "#" || number_I_label.getText() == "0")
         {
             // Open and handle a file selection dialogue
@@ -527,25 +756,22 @@ public class ScanningForm extends javax.swing.JFrame
                 // Get the chosen directory
                 File file = file_chooser.getSelectedFile();
                 
-                // Set the new label for the new directory
-                location_label.setText(file.getAbsolutePath());
-                
-                // Save the directory path
-                directory_path = file.getAbsolutePath();
-                
                 // Extract the files from the folder
                 getScannedFiles(file);
                 
                 if(file_list.size() > 0)
                 {
+                    // Set the new label for the new directory
+                    location_label.setText(file.getAbsolutePath());
+                
+                    // Save the directory path
+                    directory_path = file.getAbsolutePath();
+                
                     // Set the number and filename lables
                     number_I_label.setText("1");
                     number_II_label.setText(String.valueOf(file_list.size()));
                     filename_label.setText(file_list.get(0));
-                }
-                
-                if(file_list.size() > 0 )
-                { 
+
                     try
                     {
                         input_stream = new FileInputStream(directory_path + "\\" + file_list.get(0));
@@ -556,49 +782,24 @@ public class ScanningForm extends javax.swing.JFrame
                     }
                     controller.openDocument(input_stream, "", "");
                 }
+                
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "I'm sorry, the folder you've chosen does not contain any PDF's. Please try again.", "Incompatible Folder", JOptionPane.WARNING_MESSAGE);
+                }
             }
         }
         
         else
         {
             // Output an error message
-            JOptionPane.showMessageDialog(null, "The scanning process has already begun. To scan from a new folder either complete the current scanning procedure or exit and reopen the scanning form.", "Error: Scanning in Progress", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "The scanning process has already begun. To scan from a new folder either complete the current scanning procedure or exit and reopen the scanning form.", "Scanning in Progress", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     // Define the main function
     public static void main(String args[]) 
     {
-        try 
-        {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) 
-            {
-                if ("Nimbus".equals(info.getName())) 
-                {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        }
-        
-        catch (ClassNotFoundException ex) 
-        {
-            java.util.logging.Logger.getLogger(ScanningForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex) 
-        {
-            java.util.logging.Logger.getLogger(ScanningForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } 
-        catch (IllegalAccessException ex) 
-        {
-            java.util.logging.Logger.getLogger(ScanningForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } 
-        catch (javax.swing.UnsupportedLookAndFeelException ex) 
-        {
-            java.util.logging.Logger.getLogger(ScanningForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-
         java.awt.EventQueue.invokeLater(new Runnable() 
         {
             public void run() 
