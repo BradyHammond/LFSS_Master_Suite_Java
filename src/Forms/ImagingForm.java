@@ -1,18 +1,25 @@
+/*================================================
+                  Imaging Form
+==================================================
+// Created: 08/24/16
+// Created by: Brady Hammond
+// Last edited:
+// Last edited by:
+================================================*/
 
+// Specify the correct package
 package Forms;
 
+// Import needed libraries
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,17 +30,23 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+// Create the ImagingForm class
 public class ImagingForm extends javax.swing.JFrame 
 {
+    // Create the imagingForm constructor
     public ImagingForm(MainForm form, WebDriver passed_browser) 
     {
+        // Initialize swing componenets
         initComponents();
+        
+        // Save data members
         main_form = form;
         browser = passed_browser;
         
         // Set the default button
         this.getRootPane().setDefaultButton(submit_button);
         
+        // Resize the form and remove student file tab
         this.setSize(620, 250);
         tabs_container.remove(student_file_tab);
         
@@ -44,9 +57,11 @@ public class ImagingForm extends javax.swing.JFrame
         pdf_viewer.add(viewer_component_panel, BorderLayout.CENTER);
     }
 
+    // Suppress compile warning
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+                         
+    private void initComponents() 
+    {
         java.awt.GridBagConstraints gridBagConstraints;
 
         file_chooser = new javax.swing.JFileChooser();
@@ -76,7 +91,7 @@ public class ImagingForm extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(600, 220));
 
-        imaging_form_title_label.setFont(new java.awt.Font("Verdana", 0, 20)); // NOI18N
+        imaging_form_title_label.setFont(new java.awt.Font("Verdana", 0, 20));
         imaging_form_title_label.setForeground(new java.awt.Color(255, 255, 255));
         imaging_form_title_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         imaging_form_title_label.setText("IMAGING FORM");
@@ -88,15 +103,15 @@ public class ImagingForm extends javax.swing.JFrame
         serparator_I.setPreferredSize(new java.awt.Dimension(600, 0));
 
         tabs_container.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        tabs_container.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        tabs_container.setFont(new java.awt.Font("Verdana", 1, 12));
         tabs_container.setMinimumSize(new java.awt.Dimension(600, 159));
 
-        find_student_tab.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        find_student_tab.setFont(new java.awt.Font("Verdana", 0, 12));
         find_student_tab.setMinimumSize(new java.awt.Dimension(600, 125));
         find_student_tab.setPreferredSize(new java.awt.Dimension(600, 125));
         find_student_tab.setLayout(new java.awt.GridBagLayout());
 
-        find_student_label.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        find_student_label.setFont(new java.awt.Font("Verdana", 1, 12));
         find_student_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         find_student_label.setText("Student ID:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -109,7 +124,7 @@ public class ImagingForm extends javax.swing.JFrame
         gridBagConstraints.insets = new java.awt.Insets(6, 106, 0, 106);
         find_student_tab.add(find_student_label, gridBagConstraints);
 
-        find_student_input.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        find_student_input.setFont(new java.awt.Font("Verdana", 0, 12));
         find_student_input.setMinimumSize(new java.awt.Dimension(14, 25));
         find_student_input.setPreferredSize(new java.awt.Dimension(14, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -122,10 +137,12 @@ public class ImagingForm extends javax.swing.JFrame
         gridBagConstraints.insets = new java.awt.Insets(6, 106, 0, 106);
         find_student_tab.add(find_student_input, gridBagConstraints);
 
-        cancel_button_I.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        cancel_button_I.setFont(new java.awt.Font("Verdana", 1, 12));
         cancel_button_I.setText("Cancel");
-        cancel_button_I.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cancel_button_I.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 cancel_button_IActionPerformed(evt);
             }
         });
@@ -138,10 +155,12 @@ public class ImagingForm extends javax.swing.JFrame
         gridBagConstraints.insets = new java.awt.Insets(6, 18, 14, 0);
         find_student_tab.add(cancel_button_I, gridBagConstraints);
 
-        submit_button.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        submit_button.setFont(new java.awt.Font("Verdana", 1, 12));
         submit_button.setText("Submit");
-        submit_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        submit_button.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 submit_buttonActionPerformed(evt);
             }
         });
@@ -156,9 +175,9 @@ public class ImagingForm extends javax.swing.JFrame
 
         tabs_container.addTab("Find Student", find_student_tab);
 
-        student_file_tab.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        student_file_tab.setFont(new java.awt.Font("Verdana", 0, 12));
 
-        student_folder_label.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        student_folder_label.setFont(new java.awt.Font("Verdana", 1, 12));
         student_folder_label.setText("Student Folder: ");
 
         pdf_viewer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -166,33 +185,39 @@ public class ImagingForm extends javax.swing.JFrame
         pdf_viewer.setPreferredSize(new java.awt.Dimension(574, 30));
         pdf_viewer.setLayout(new java.awt.BorderLayout());
 
-        keep_button.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        keep_button.setFont(new java.awt.Font("Verdana", 1, 12));
         keep_button.setText("Keep");
-        keep_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        keep_button.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 keep_buttonActionPerformed(evt);
             }
         });
 
-        cancel_button_II.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        cancel_button_II.setFont(new java.awt.Font("Verdana", 1, 12));
         cancel_button_II.setText("Cancel");
-        cancel_button_II.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cancel_button_II.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 cancel_button_IIActionPerformed(evt);
             }
         });
 
-        file_number_label.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        file_number_label.setFont(new java.awt.Font("Verdana", 1, 12));
         file_number_label.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         file_number_label.setText("File: # of #");
 
-        filename_label.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        filename_label.setFont(new java.awt.Font("Verdana", 1, 12));
         filename_label.setText("Filename: ");
 
-        delete_button.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        delete_button.setFont(new java.awt.Font("Verdana", 1, 12));
         delete_button.setText("Delete");
-        delete_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        delete_button.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 delete_buttonActionPerformed(evt);
             }
         });
@@ -243,13 +268,15 @@ public class ImagingForm extends javax.swing.JFrame
 
         tabs_container.addTab("Student File", student_file_tab);
 
-        merge_pdfs_tab.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        merge_pdfs_tab.setFont(new java.awt.Font("Verdana", 0, 12));
         merge_pdfs_tab.setLayout(new java.awt.GridBagLayout());
 
-        merge_button.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        merge_button.setFont(new java.awt.Font("Verdana", 1, 12));
         merge_button.setText("Merge PDF's");
-        merge_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        merge_button.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 merge_buttonActionPerformed(evt);
             }
         });
@@ -262,10 +289,12 @@ public class ImagingForm extends javax.swing.JFrame
         gridBagConstraints.insets = new java.awt.Insets(24, 233, 0, 233);
         merge_pdfs_tab.add(merge_button, gridBagConstraints);
 
-        cancel_button_III.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        cancel_button_III.setFont(new java.awt.Font("Verdana", 1, 12));
         cancel_button_III.setText("Cancel");
-        cancel_button_III.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cancel_button_III.addActionListener(new java.awt.event.ActionListener() 
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            {
                 cancel_button_IIIActionPerformed(evt);
             }
         });
@@ -304,7 +333,7 @@ public class ImagingForm extends javax.swing.JFrame
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }                      
 
     // Define the advance current file function
     private void advanceCurrentFile()
@@ -323,6 +352,7 @@ public class ImagingForm extends javax.swing.JFrame
             }
             catch(Exception e)
             {
+                // Throw an exception
                 throw new RuntimeException(e);
             }
             
@@ -336,28 +366,43 @@ public class ImagingForm extends javax.swing.JFrame
         
         else
         {
+            // Output a instructions and a file chooser window
             JOptionPane.showMessageDialog(null, "Please select a folder to move these files.", "File Destination", JOptionPane.INFORMATION_MESSAGE);
             int return_value = file_chooser.showOpenDialog(this);
+            
+            // Check for a chosen file
             if (return_value == JFileChooser.APPROVE_OPTION)
             {
+                // Attempt to close the last pdf
                 try
                 {
                     input_stream.close();
                 }
                 catch(Exception e)
                 {
+                    // Throw an exception
                     throw new RuntimeException(e);
                 }
                 
+                // Get the selected file
                 File new_folder = file_chooser.getSelectedFile();
+                
+                // Get the student's folder
                 File student_folder = new File(directory_path);
+                
+                // Get the files from the student's folder
                 getStudentFiles(student_folder);
                 
+                // Initialize the name count
                 int file_name_count = 1;
+                
+                // Loop through the files from the student folder
                 for (String file: file_list)
                 {
+                    // Get the file's absolute path
                     File rename_file = new File(directory_path + "\\" + file);
                     
+                    // Attempt to move the file to the selected folder
                     try
                     {
                         rename_file.renameTo(new File(new_folder + "\\" + student_name + " " + String.valueOf(file_name_count) + ".pdf"));
@@ -365,12 +410,15 @@ public class ImagingForm extends javax.swing.JFrame
                     
                     catch (Exception e)
                     {
+                        // Throw an exception
                         throw new RuntimeException(e);
                     }
-                    
+                 
+                    // Increment the file count
                     file_name_count++;
                 }
                 
+                // Attempt to delete the student file
                 try
                 {
                     student_folder.delete();
@@ -378,6 +426,7 @@ public class ImagingForm extends javax.swing.JFrame
                 
                 catch (Exception e)
                 {
+                    // Throw an exception
                     throw new RuntimeException(e);
                 }
             }
@@ -394,15 +443,17 @@ public class ImagingForm extends javax.swing.JFrame
         }
     }
     
-    private void cancel_button_IActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_button_IActionPerformed
+    private void cancel_button_IActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                                
         // Close the helper form
         this.dispose();
         
         // Restore the main form
         main_form.setVisible(true);
-    }//GEN-LAST:event_cancel_button_IActionPerformed
+    }                                               
 
-    private void cancel_button_IIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_button_IIActionPerformed
+    private void cancel_button_IIActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                                 
         // Resize the form
         this.setSize(620, 250);
         
@@ -412,9 +463,10 @@ public class ImagingForm extends javax.swing.JFrame
         tabs_container.addTab("Merge PDF's", merge_pdfs_tab);
         find_student_input.setText("");
         this.getRootPane().setDefaultButton(submit_button);
-    }//GEN-LAST:event_cancel_button_IIActionPerformed
+    }                                                
 
-    private void submit_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submit_buttonActionPerformed
+    private void submit_buttonActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                              
         // Set the implicit wait time
         browser.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
                 
@@ -482,6 +534,7 @@ public class ImagingForm extends javax.swing.JFrame
                 // Check if the student folder can be located
                 if(file.getName().indexOf(student_id) >= 0)
                 {
+                    // If so, save the folder and exit the loop
                     target_folder = file;
                     break;
                 }
@@ -497,21 +550,25 @@ public class ImagingForm extends javax.swing.JFrame
             
             else
             {
+                // Get the files from the target folder
                 getStudentFiles(target_folder);
                     
                 // Check if there are any files to be scanned
                 if(file_list.size() > 0 )
                 { 
+                    // Initialize the needed variables
                     current_file = 0;
                     student_folder_label.setText("Student Folder: " + target_folder.getAbsolutePath());
                     directory_path = target_folder.getAbsolutePath();
                     filename_label.setText("Filename: " + file_list.get(current_file));
                     file_number_label.setText("File: 1 of " + (String.valueOf(file_list.size())));
 
+                    // Adjust the appropriate tabs
                     tabs_container.addTab("Student File Tab", student_file_tab);
                     tabs_container.remove(find_student_tab);
                     tabs_container.remove(merge_pdfs_tab);
 
+                    // Reorganize the form
                     this.setSize(620,750);
                     this.repaint();
                     tabs_container.setPreferredSize(new Dimension(588, 637));
@@ -546,21 +603,26 @@ public class ImagingForm extends javax.swing.JFrame
                 }
             }
         }
-    }//GEN-LAST:event_submit_buttonActionPerformed
+    }                                             
 
-    private void cancel_button_IIIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_button_IIIActionPerformed
+    private void cancel_button_IIIActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                                  
         // Close the helper form
         this.dispose();
 
         // Restore the main form
         main_form.setVisible(true);
-    }//GEN-LAST:event_cancel_button_IIIActionPerformed
+    }                                                 
 
-    private void keep_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keep_buttonActionPerformed
+    private void keep_buttonActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                            
+        // Advance the file
         advanceCurrentFile();
-    }//GEN-LAST:event_keep_buttonActionPerformed
+    }                                           
 
-    private void delete_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_buttonActionPerformed
+    private void delete_buttonActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                              
+        // Attempt to close the pdf
         try 
         {
             input_stream.close();
@@ -572,8 +634,10 @@ public class ImagingForm extends javax.swing.JFrame
             throw new RuntimeException(e);
         }
         
+        // Get the file to be deleted
         File delete_file = new File(directory_path + "\\" + file_list.get(current_file));
         
+        // Attempt to delete the file
         try
         {
             delete_file.delete();
@@ -581,26 +645,40 @@ public class ImagingForm extends javax.swing.JFrame
         
         catch (Exception e)
         {
+            // Throw an exception
             throw new RuntimeException(e);
         }
         
+        // Advance the file
         advanceCurrentFile();
-    }//GEN-LAST:event_delete_buttonActionPerformed
+    }                                             
 
-    private void merge_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_merge_buttonActionPerformed
+    private void merge_buttonActionPerformed(java.awt.event.ActionEvent evt) 
+    {                                             
+        // Output instructions and a file chooser
         JOptionPane.showMessageDialog(null, "Please select a folder to merge.", "Merge Folder", JOptionPane.INFORMATION_MESSAGE);
         int return_value = file_chooser.showOpenDialog(this);
+        
+        // Check for a selected folder
         if (return_value == JFileChooser.APPROVE_OPTION)
         {
+            // Save the folder and it's absolute path
             File folder = file_chooser.getSelectedFile();
             directory_path = folder.getAbsolutePath();
+            
+            // Get the files in that folder
             getMergeFiles(folder);
             
+            // Check if there are less than 100 files in the folder
             if (file_list.size() <= 100 && file_list.size() > 0)
             {
+                // Create a pdf merger
                 PDFMergerUtility utility = new PDFMergerUtility();
+                
+                // Loop through each file
                 for(String file: file_list)
                 {
+                    // Attempt to add the file to the merger
                     try
                     {
                         utility.addSource(file);
@@ -608,49 +686,70 @@ public class ImagingForm extends javax.swing.JFrame
                     
                     catch(Exception e)
                     {
+                        // Throw an exception
                         throw new RuntimeException(e);
                     }
                 }
                 
+                // Set the merge file name
                 utility.setDestinationFileName(directory_path + "\\Merge.pdf");
+                
+                // Attempt to merge the documents
                 try 
                 {
                     utility.mergeDocuments();
                 } 
+                
                 catch (Exception e) 
                 {
+                    // Throw an exception
                     throw new RuntimeException(e);
                 }
                 
+                // Get all of the files in the folder
                 getMergeFiles(folder);
                 
+                // Loop through each file
                 for(String file: file_list)
                 {
+                    // Check if the file is a merge file
                     if(!(file.contains("Merge")))
                     {
+                        // If not, delete the file
                         File delete_file = new File(file);
                         delete_file.delete();
                     }
                 }
                 
+                // Output a completion message
                 JOptionPane.showMessageDialog(null, "The files in the selected folder have been successfully merged.", "Process Complete", JOptionPane.INFORMATION_MESSAGE);
             }
             
+            // Check if the folder is empty
             else if(file_list.size() <= 0)
             {
+                // If so, output an error message
                 JOptionPane.showMessageDialog(null, "There are currently no files to merge in this folder.", "Empty File", JOptionPane.ERROR_MESSAGE);
             }
             
             else
             {
+                // Get the sets of 100 to merge
                 int merge_sets = (int) Math.ceil(file_list.size() / 100.0);
+                
+                // Loop through the sets of 100
                 for(int i = 0;  i < merge_sets; i++)
                 {
+                    // Check for the first 100
                     if(i == 0)
                     {
+                        // Create a new pdf merger
                         PDFMergerUtility utility = new PDFMergerUtility();
+                        
+                        // Loop through the first 100 files
                         for(int j = 0; j < 100; j++)
                         {
+                            // Attempt to add the file to the merger
                             try
                             {
                                 utility.addSource(file_list.get(j));
@@ -658,26 +757,37 @@ public class ImagingForm extends javax.swing.JFrame
 
                             catch(Exception e)
                             {
+                                // Throw an exception
                                 throw new RuntimeException(e);
                             }
                         }
 
+                        // Set the merge file name
                         utility.setDestinationFileName(directory_path + "\\Merge_" + String.valueOf(i+1) + ".pdf");
+                        
+                        // Attempt to merge the documents
                         try 
                         {
                             utility.mergeDocuments();
                         } 
+                        
                         catch (Exception e) 
                         {
+                            // Throw an exception
                             throw new RuntimeException(e);
                         }
                     }
                     
+                    // Check for the last set of 100
                     else if(i == (merge_sets - 1))
                     {
+                        // Create a new pdf merger 
                         PDFMergerUtility utility = new PDFMergerUtility();
+                        
+                        // Loop through the remaining folder
                         for(int j = (i* 100); j < file_list.size(); j++)
                         {
+                          // Attempt to add the file to the merger
                           try
                             {
                                 utility.addSource(file_list.get(j));
@@ -685,26 +795,36 @@ public class ImagingForm extends javax.swing.JFrame
 
                             catch(Exception e)
                             {
+                                // Throw an exception
                                 throw new RuntimeException(e);
                             }  
                         }
                         
+                        // Set the merge file name
                         utility.setDestinationFileName(directory_path + "\\Merge_" + String.valueOf(i+1) + ".pdf");
+                        
+                        // Atempt to mege the documents
                         try 
                         {
                             utility.mergeDocuments();
                         } 
+                        
                         catch (Exception e) 
                         {
+                            // Throw an exception
                             throw new RuntimeException(e);
                         }
                     }
                     
                     else
                     {
+                        // Create a new pdf merger 
                         PDFMergerUtility utility = new PDFMergerUtility();
+                        
+                        // Loop through the correct set of 100
                         for(int j = (i* 100); j < ((i*100) + 100); j++)
                         {
+                            // Attempt to add the files to the merger
                             try
                             {
                                 utility.addSource(file_list.get(j));
@@ -712,35 +832,48 @@ public class ImagingForm extends javax.swing.JFrame
 
                             catch(Exception e)
                             {
+                                // Throw an exception
                                 throw new RuntimeException(e);
                             }
                         }
                         
+                        // Set the merge file name
                         utility.setDestinationFileName(directory_path + "\\Merge_" + String.valueOf(i+1) + ".pdf");
+                        
+                        // Attempt to merge the documents
                         try 
                         {
                             utility.mergeDocuments();
                         } 
+                        
                         catch (Exception e) 
                         {
+                            // Throw an exception
                             throw new RuntimeException(e);
                         }
                     }
                 }
                 
+                // Get all of the files in the folder
                 getMergeFiles(folder);
+                
+                // Loop through each file
                 for(String file: file_list)
                 {
+                    // Check if the file is a merge file
                     if(!(file.contains("Merge")))
                     {
+                        // If not delete the file
                         File delete_file = new File(file);
                         delete_file.delete();
                     }
                 }
+                
+                // Output a completion message
                 JOptionPane.showMessageDialog(null, "The files in the selected folder have been successfully merged.", "Process Complete", JOptionPane.INFORMATION_MESSAGE);
             }
         }
-    }//GEN-LAST:event_merge_buttonActionPerformed
+    }                                            
     
     // Define the get student files function
     private static void getStudentFiles(final File folder)
@@ -798,9 +931,9 @@ public class ImagingForm extends javax.swing.JFrame
         }
     }
     
+    // Define the main function
     public static void main(String args[]) 
     {
-
         java.awt.EventQueue.invokeLater(new Runnable() 
         {
             public void run() 
@@ -820,7 +953,7 @@ public class ImagingForm extends javax.swing.JFrame
     private String student_name;
     // End of variables declaration
     
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton cancel_button_I;
     private javax.swing.JButton cancel_button_II;
     private javax.swing.JButton cancel_button_III;
@@ -841,5 +974,5 @@ public class ImagingForm extends javax.swing.JFrame
     private javax.swing.JLabel student_folder_label;
     private javax.swing.JButton submit_button;
     private javax.swing.JTabbedPane tabs_container;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }
