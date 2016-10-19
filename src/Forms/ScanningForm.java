@@ -11,12 +11,17 @@
 package Forms;
 
 // Import needed libraries
+import com.google.common.io.Files;
+import org.apache.commons.io.FileUtils;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,8 +42,14 @@ public class ScanningForm extends javax.swing.JFrame
         main_form = form;
         browser = passed_browser;
         
+        // Set the file number
+        current_file = 0;
+        
         // Initialize components
         initComponents();
+        
+        // Set the default button
+        this.getRootPane().setDefaultButton(submit_button);
         
         // Get the files in the default folder
         File file = new File(directory_path);
@@ -50,7 +61,7 @@ public class ScanningForm extends javax.swing.JFrame
             // Set the number and filename lables
             number_I_label.setText("1");
             number_II_label.setText(String.valueOf(file_list.size()));
-            filename_label.setText(file_list.get(0));
+            filename_label.setText(file_list.get(current_file));
         }
         
         else
@@ -76,7 +87,7 @@ public class ScanningForm extends javax.swing.JFrame
             // Attempt to open the first file
             try
             {
-                input_stream = new FileInputStream(directory_path + "\\" + file_list.get(0));
+                input_stream = new FileInputStream(directory_path + "\\" + file_list.get(current_file));
             }
             
             catch(Exception e)
@@ -91,7 +102,7 @@ public class ScanningForm extends javax.swing.JFrame
     }
     
     // Define the get scanned files function
-    public static void getScannedFiles(final File folder)
+    private static void getScannedFiles(final File folder)
     {
         // Clear the file list
         file_list.clear();
@@ -118,8 +129,10 @@ public class ScanningForm extends javax.swing.JFrame
         }
     }
     
+    // Define the is numeric function
     public boolean isNumeric(String string) 
     {  
+        // Check if the string is numeric
         return string.matches("[-+]?\\d*\\.?\\d+");  
     }
     
@@ -127,7 +140,7 @@ public class ScanningForm extends javax.swing.JFrame
     private void searchIDNumber(String student_id)
     {
         // Set the implicit wait time
-        browser.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        browser.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         
         // Navigate to persum
         browser.get("https://y.byu.edu/ry/ae/prod/person/cgi/personSummary.cgi");
@@ -227,6 +240,7 @@ public class ScanningForm extends javax.swing.JFrame
                     
                     catch (IOException e) 
                     {
+                        // Throw an exception
                         throw new RuntimeException(e);
                     }
                 }
@@ -264,6 +278,7 @@ public class ScanningForm extends javax.swing.JFrame
 
                 catch (IOException e) 
                 {
+                    // Throw an exception
                     throw new RuntimeException(e);
                 }
             }
@@ -290,6 +305,7 @@ public class ScanningForm extends javax.swing.JFrame
             }
             catch(Exception e)
             {
+                // Throw an exception
                 throw new RuntimeException(e);
             }
             
@@ -324,6 +340,7 @@ public class ScanningForm extends javax.swing.JFrame
                 
                 catch (IOException e) 
                 {
+                    // Throw an exception
                     throw new RuntimeException(e);
                 }
 
@@ -348,12 +365,12 @@ public class ScanningForm extends javax.swing.JFrame
         }
     }
 
-
     // Suppress compile warnings
     @SuppressWarnings("unchecked")
-
+                          
     private void initComponents() 
     {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         file_chooser = new javax.swing.JFileChooser();
         pdf_viewer = new javax.swing.JPanel();
@@ -382,13 +399,22 @@ public class ScanningForm extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
         setBackground(new java.awt.Color(0, 46, 93));
+        setMinimumSize(new java.awt.Dimension(600, 850));
         setPreferredSize(new java.awt.Dimension(600, 850));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         pdf_viewer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pdf_viewer.setMaximumSize(new java.awt.Dimension(563, 563));
+        pdf_viewer.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
         pdf_viewer.setMinimumSize(new java.awt.Dimension(563, 563));
         pdf_viewer.setPreferredSize(new java.awt.Dimension(563, 563));
         pdf_viewer.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 6, 0, 6);
+        getContentPane().add(pdf_viewer, gridBagConstraints);
 
         submit_button.setText("Submit");
         submit_button.addActionListener(new java.awt.event.ActionListener() 
@@ -398,6 +424,13 @@ public class ScanningForm extends javax.swing.JFrame
                 submit_buttonActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 127, 6, 0);
+        getContentPane().add(submit_button, gridBagConstraints);
 
         skip_button.setText("Skip");
         skip_button.addActionListener(new java.awt.event.ActionListener() 
@@ -407,6 +440,13 @@ public class ScanningForm extends javax.swing.JFrame
                 skip_buttonActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 45;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 12, 6, 0);
+        getContentPane().add(skip_button, gridBagConstraints);
 
         cancel_button.setText("Cancel");
         cancel_button.addActionListener(new java.awt.event.ActionListener() 
@@ -416,15 +456,40 @@ public class ScanningForm extends javax.swing.JFrame
                 cancel_buttonActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 31;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 12, 6, 0);
+        getContentPane().add(cancel_button, gridBagConstraints);
 
         helper_form_title_label.setFont(new java.awt.Font("Verdana", 0, 20));
         helper_form_title_label.setForeground(new java.awt.Color(255, 255, 255));
         helper_form_title_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         helper_form_title_label.setText("SCANNING FORM");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.ipadx = 386;
+        gridBagConstraints.ipady = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 6);
+        getContentPane().add(helper_form_title_label, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.ipadx = 562;
+        gridBagConstraints.ipady = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 6);
+        getContentPane().add(serparator_I, gridBagConstraints);
 
         options_panel.setBackground(new java.awt.Color(123, 153, 203));
         options_panel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        options_panel.setMaximumSize(new java.awt.Dimension(563, 109));
+        options_panel.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
         options_panel.setMinimumSize(new java.awt.Dimension(563, 109));
 
         id_label.setBackground(new java.awt.Color(0, 46, 93));
@@ -506,217 +571,198 @@ public class ScanningForm extends javax.swing.JFrame
         location_label.setFont(new java.awt.Font("Verdana", 0, 12));
         location_label.setForeground(new java.awt.Color(255, 255, 255));
         location_label.setText("M:\\To_Be_Scanned\\");
-        location_label.setFocusable(false);
-        location_label.setMaximumSize(new java.awt.Dimension(389, 25));
-        location_label.setMinimumSize(new java.awt.Dimension(389, 25));
-        location_label.setName("");
-        location_label.setPreferredSize(new java.awt.Dimension(389, 25));
+            location_label.setFocusable(false);
+            location_label.setMaximumSize(new java.awt.Dimension(389, 25));
+            location_label.setMinimumSize(new java.awt.Dimension(389, 25));
+            location_label.setName("");
+            location_label.setPreferredSize(new java.awt.Dimension(389, 25));
 
-        file_chooser_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resources/FolderIcon.png")));
-        file_chooser_button.setMaximumSize(new java.awt.Dimension(25, 25));
-        file_chooser_button.setMinimumSize(new java.awt.Dimension(25, 25));
-        file_chooser_button.setPreferredSize(new java.awt.Dimension(25, 25));
-
-        file_chooser_button.addActionListener(new java.awt.event.ActionListener() 
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt) 
+            file_chooser_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resources/FolderIcon.png")));
+            file_chooser_button.setMaximumSize(new java.awt.Dimension(25, 25));
+            file_chooser_button.setMinimumSize(new java.awt.Dimension(25, 25));
+            file_chooser_button.setPreferredSize(new java.awt.Dimension(25, 25));
+            file_chooser_button.addActionListener(new java.awt.event.ActionListener() 
             {
-                file_chooser_buttonActionPerformed(evt);
-            }
-        });
+                public void actionPerformed(java.awt.event.ActionEvent evt) 
+                {
+                    file_chooser_buttonActionPerformed(evt);
+                }
+            });
 
-        file_option_box.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        file_option_box.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Academic Improvemtent Plan", "Change of Major", "Email", "Minor", "Plan", "Progress Report", "Substitution", "Transfer", "Waiver", "Other (Custom)" }));
-        file_option_box.setMaximumSize(new java.awt.Dimension(210, 25));
+            file_option_box.setFont(new java.awt.Font("Verdana", 0, 12))
+            file_option_box.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Academic Improvemtent Plan", "Change of Major", "Email", "Minor", "Plan", "Progress Report", "Substitution", "Transfer", "Waiver", "Other" }));
+            file_option_box.setMaximumSize(new java.awt.Dimension(210, 25));
 
-        javax.swing.GroupLayout options_panelLayout = new javax.swing.GroupLayout(options_panel);
-        options_panel.setLayout(options_panelLayout);
-        options_panelLayout.setHorizontalGroup(
-            options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, options_panelLayout.createSequentialGroup()
-                .addContainerGap(466, Short.MAX_VALUE)
-                .addComponent(number_I_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(of_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(number_II_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(options_panelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(options_panelLayout.createSequentialGroup()
-                            .addComponent(file_type_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(file_option_box, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(id_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(id_input, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))
-                        .addGroup(options_panelLayout.createSequentialGroup()
-                            .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(options_panelLayout.createSequentialGroup()
-                                    .addComponent(scanning_from_label, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(file_chooser_button, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(processing_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(options_panelLayout.createSequentialGroup()
-                                    .addComponent(filename_label, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE))
-                                .addComponent(location_label, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))))
-                    .addGap(12, 12, 12)))
-        );
-        options_panelLayout.setVerticalGroup(
-            options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(options_panelLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(number_II_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+            javax.swing.GroupLayout options_panelLayout = new javax.swing.GroupLayout(options_panel);
+            options_panel.setLayout(options_panelLayout);
+            options_panelLayout.setHorizontalGroup(
+                options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, options_panelLayout.createSequentialGroup()
+                    .addContainerGap(466, Short.MAX_VALUE)
+                    .addComponent(number_I_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(of_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(number_I_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(43, Short.MAX_VALUE))
-            .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(options_panelLayout.createSequentialGroup()
-                    .addGap(6, 6, 6)
-                    .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(scanning_from_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(location_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(file_chooser_button, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(processing_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(filename_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(file_type_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(file_option_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(id_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(id_input, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(127, 127, 127)
-                        .addComponent(submit_button, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(skip_button, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cancel_button, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(number_II_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap())
+                .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(options_panelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(serparator_I)
-                            .addComponent(helper_form_title_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(options_panel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(pdf_viewer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(helper_form_title_label, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(serparator_I, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(options_panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(pdf_viewer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(skip_button)
-                    .addComponent(cancel_button)
-                    .addComponent(submit_button))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                        .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(options_panelLayout.createSequentialGroup()
+                                .addComponent(file_type_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(file_option_box, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(id_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(id_input, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(options_panelLayout.createSequentialGroup()
+                                .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(options_panelLayout.createSequentialGroup()
+                                        .addComponent(scanning_from_label, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(file_chooser_button, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(processing_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(options_panelLayout.createSequentialGroup()
+                                        .addComponent(filename_label, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(location_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(12, 12, 12)))
+            );
+            options_panelLayout.setVerticalGroup(
+                options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(options_panelLayout.createSequentialGroup()
+                    .addGap(37, 37, 37)
+                    .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(number_II_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(of_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(number_I_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(43, Short.MAX_VALUE))
+                .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(options_panelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(scanning_from_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(location_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(file_chooser_button, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(processing_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(filename_label, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(options_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(file_type_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(file_option_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(id_label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(id_input, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(11, Short.MAX_VALUE)))
+            );
 
-        pack();
-    }
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 2;
+            gridBagConstraints.gridwidth = 4;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+            gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 6);
+            getContentPane().add(options_panel, gridBagConstraints);
+
+            pack();
+        }                       
 
     // Define the submit button click function            
     private void submit_buttonActionPerformed(java.awt.event.ActionEvent evt) 
-    {
-         // Check if there is a file loaded
+    {                                              
+        
+        // Check if there is a file loaded
         if(number_I_label.getText() == "#" || number_I_label.getText() == "0")
         {
-            // If not 
+            // If not, output an error message and exit the function
             JOptionPane.showMessageDialog(null, "There is nothing to submit.", "No File", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
+        // Initialize the id value variable
         String id_value = "";
+        
+        // Check if there is anything in the id box
         if(id_input.getText().equals("") == false)
         {
+            // If so get the id number and format it
             id_value = id_input.getText();
             id_value.replaceAll("[\\s\\-()]", "");
             id_value.replaceAll("\\s+","");
         }
         
+        // Check if there is anything in the id box
         if(id_value == "")
         {
+            // If not, output an error message and exit the function
             JOptionPane.showMessageDialog(null, "Please enter an ID number or NetID.", "Missing ID", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
+        // Check if the id box contains a number 
         else if(isNumeric(id_value) == true)
         {
+            // If so, check if the number is too short
             if(id_value.length() < 9)
             {
+                // If so, output an error message and exit the function
                 JOptionPane.showMessageDialog(null, "The given ID number is too short. Please try again.", "Invalid ID Number", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
+            // Check if the id number is too long
             else if(id_value.length() > 9)
             {
+                // If so, output an error message and exit the function
                 JOptionPane.showMessageDialog(null, "The given ID number is too long. Please try again.", "Invalid ID Number", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             else
             {
+                // Search for the student's information
                 searchIDNumber(id_value);
             }
         }
         
         else
         {
+            // Search for the student's information
            searchIDNumber(id_value);
         }
-    }
+    }                                             
 
     // Define the skip button click function
     private void skip_buttonActionPerformed(java.awt.event.ActionEvent evt) 
-    {
-         int response = JOptionPane.showConfirmDialog(null, 
+    {                                            
+        // Check if the student actually wants to skip the file
+        int response = JOptionPane.showConfirmDialog(null, 
                 "WARNING: This file will still be cleared with the rest of the items in the scanning folder if you choose to empty the file at the end of the program. Are you sure you wish to continue?", 
                 "Skip Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            
+            // Check if the student said yes
             if(response == JOptionPane.YES_OPTION)
             {
+                // If so, go to the next file
                 advanceCurrentFile();
             }
             
             else
             {
+                // Otherwise do nothing
                 return;
             }
-    }
-    }
+    }                                           
 
     // Define the cancel button click function
     private void cancel_buttonActionPerformed(java.awt.event.ActionEvent evt) 
-    {
+    {                                              
         // Reset the directory
         directory_path = "M:\\To_Be_Scanned\\";
 
@@ -732,6 +778,7 @@ public class ScanningForm extends javax.swing.JFrame
             } 
             catch (IOException e) 
             {
+                // Throw an exception
                 throw new RuntimeException(e);
             }
         }
@@ -741,12 +788,12 @@ public class ScanningForm extends javax.swing.JFrame
         
         // Restore the main form
         main_form.setVisible(true);
-    }
+    }                                             
 
     // Define the file chooser button click
     private void file_chooser_buttonActionPerformed(java.awt.event.ActionEvent evt) 
-    {
-       // Check if the scanning process has begun yet
+    {                                                    
+        // Check if the scanning process has begun yet
         if (number_I_label.getText() == "1" || number_I_label.getText() == "#" || number_I_label.getText() == "0")
         {
             // Open and handle a file selection dialogue
@@ -759,6 +806,7 @@ public class ScanningForm extends javax.swing.JFrame
                 // Extract the files from the folder
                 getScannedFiles(file);
                 
+                // Check if there are any files in the selected folder
                 if(file_list.size() > 0)
                 {
                     // Set the new label for the new directory
@@ -772,19 +820,24 @@ public class ScanningForm extends javax.swing.JFrame
                     number_II_label.setText(String.valueOf(file_list.size()));
                     filename_label.setText(file_list.get(0));
 
+                    // attempt to open the pdf
                     try
                     {
                         input_stream = new FileInputStream(directory_path + "\\" + file_list.get(0));
                     }
                     catch(Exception e)
                     {
+                        // Throw an exception
                         throw new RuntimeException(e);
                     }
+                    
+                    // Add the pdf to the form
                     controller.openDocument(input_stream, "", "");
                 }
                 
                 else
                 {
+                    // Output an error message
                     JOptionPane.showMessageDialog(null, "I'm sorry, the folder you've chosen does not contain any PDF's. Please try again.", "Incompatible Folder", JOptionPane.WARNING_MESSAGE);
                 }
             }
@@ -795,7 +848,7 @@ public class ScanningForm extends javax.swing.JFrame
             // Output an error message
             JOptionPane.showMessageDialog(null, "The scanning process has already begun. To scan from a new folder either complete the current scanning procedure or exit and reopen the scanning form.", "Scanning in Progress", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }                                                   
     
     // Define the main function
     public static void main(String args[]) 
@@ -815,9 +868,10 @@ public class ScanningForm extends javax.swing.JFrame
     private static ArrayList<String> file_list = new ArrayList<String>();
     private SwingController controller;
     private InputStream input_stream;
+    private Integer current_file;
     // End of variables declaration
     
-    // Variables declaration - swing variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton cancel_button;
     private javax.swing.JFileChooser file_chooser;
     private javax.swing.JButton file_chooser_button;
@@ -832,11 +886,11 @@ public class ScanningForm extends javax.swing.JFrame
     private javax.swing.JLabel number_I_label;
     private javax.swing.JLabel of_label;
     private javax.swing.JPanel options_panel;
-    private javax.swing.JPanel pdf_viewer;
+    private volatile javax.swing.JPanel pdf_viewer;
     private javax.swing.JLabel processing_label;
     private javax.swing.JLabel scanning_from_label;
     private javax.swing.JSeparator serparator_I;
     private javax.swing.JButton skip_button;
     private javax.swing.JButton submit_button;
-    // End of variables declaration
+    // End of variables declaration                   
 }
