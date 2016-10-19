@@ -215,7 +215,13 @@ public class MainForm extends javax.swing.JFrame
     // Define the imaging button click function
     private void imaging_buttonActionPerformed(java.awt.event.ActionEvent evt) 
     {
-        JOptionPane.showMessageDialog(null, "This feature is currently unavailable. Funcionatlity should be restored soon", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+        // Hide the main form
+        this.setVisible(false);
+        
+        // Create the imaging form
+        ImagingForm imaging_form = new ImagingForm(this, browser);
+        imaging_form.setVisible(true);
+        imaging_form.getContentPane().setBackground(new Color(0,46,93));
     }
 
     // Define the scanning button click function
